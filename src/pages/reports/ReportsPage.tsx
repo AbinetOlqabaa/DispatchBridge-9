@@ -36,7 +36,7 @@ export function ReportsPage() {
       const data = await api.getAnalyticsReport();
       setReportData(data);
     } catch (err: any) {
-      setError(err.message || 'Failed to generate analytics report.');
+      setError(err.message || t('msg.error'));
     } finally {
       setLoading(false);
     }
@@ -167,7 +167,14 @@ export function ReportsPage() {
   const handleExportCSV = () => {
     if (!reportData) return;
     try {
-      const headers = ['Partner Name', 'Total Dispatches', 'Successful', 'Discrepancies', 'Success Rate %', 'Total Volume'];
+      const headers = [
+        t('table.partner_name'),
+        t('table.dispatched'),
+        t('table.intact'),
+        t('table.shortfall'),
+        t('table.success_rate'),
+        t('table.volume_handled'),
+      ];
       const rows = (reportData.partnerPerformance || []).map((p: any) => [
         `"${p.partnerName}"`,
         p.totalDispatches,

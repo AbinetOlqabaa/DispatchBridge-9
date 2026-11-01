@@ -81,7 +81,7 @@ export const DispatchListPage: React.FC<DispatchListPageProps> = ({
       const data = await api.getDispatches(filter);
       setDispatches(data);
     } catch (err: any) {
-      setError(err?.message || 'Unable to load shipments.');
+      setError(err?.message || t('msg.error'));
     } finally {
       setLoading(false);
     }

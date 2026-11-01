@@ -77,7 +77,7 @@ export const PublicPartnerView: React.FC<PublicPartnerViewProps> = ({ shareToken
         }))
       );
     } catch (err: any) {
-      setError(err.message || 'Delivery manifest not found or link has expired.');
+      setError(err.message || t('manifest.load_error_msg', 'Delivery manifest not found or link has expired.'));
     } finally {
       setLoading(false);
     }
@@ -142,9 +142,9 @@ export const PublicPartnerView: React.FC<PublicPartnerViewProps> = ({ shareToken
 
       setDispatch(updated);
       setIsVerifying(false);
-      setSubmitSuccess('Official delivery receipt verified! Shipper has been notified, signature locked, and audit entry recorded.');
+      setSubmitSuccess(t('manifest.submit_success_msg', 'Official delivery receipt verified! Shipper has been notified, signature locked, and audit entry recorded.'));
     } catch (err: any) {
-      setSubmitError(err.message || 'Failed to submit receipt confirmation.');
+      setSubmitError(err.message || t('manifest.submit_error_msg', 'Failed to submit receipt confirmation.'));
     } finally {
       setIsSubmitting(false);
     }

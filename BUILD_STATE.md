@@ -1,6 +1,6 @@
 # Build State — Business Dispatch & Delivery Reconciliation (DispatchBridge)
 
-- **Last Updated:** 2026-11-01T11:14:00-08:00
+- **Last Updated:** 2026-11-01T12:48:00-08:00
 - **Runtime / Platform:** Node.js v22.14.0 on Linux container with Express 4 backend & Vite 8 React 19 Frontend. Configured as an installable mobile-first Progressive Web App (PWA). *Note: Native Android build tooling (Gradle / Android SDK) is not supported in this runtime environment.*
 - **Stack:**
   - Backend: Node.js, Express 4, TypeScript, HMAC SHA-256 session tokens, timing-safe one-time bootstrap tokens, Fayda e-ID verification adapter, OTP gateway adapter, in-memory domain adapter (`sandboxStore`) with full multi-tenant isolation.
@@ -18,13 +18,13 @@
 | Phase 3 | `.ai/03_AUTH_AND_AUTHORIZATION.md` | **COMPLETE** | One-time random bootstrap secret (`/api/auth/bootstrap-superadmin`), HMAC signed session tokens, multi-tenant RBAC, quick role sandbox switcher for testing. |
 | Phase 4 | `.ai/04_DISPATCH_AND_RECONCILIATION.md` | **COMPLETE** | 2-step dispatch creation (draft + pre-submit review), unguessable share tokens (`/?token=...`), tamper-resistant immutable quantity enforcement, line-level discrepancy reporting (shortage, damaged, loss), signoffs, sender acknowledgement/resolution. |
 | Phase 5 | `.ai/05_NOTIFICATIONS_AND_AUDIT.md` | **COMPLETE** | Real-time in-app notification drawer with unread counter & read tracking; immutable audit trail logging actor, role, correlation ID, and metadata for every mutation. |
-| Phase 6 | `.ai/06_TABLET_FIRST_UI_UX_AND_ACCESSIBILITY.md` | **COMPLETE** | Comprehensive tablet portrait (768x1024, 820x1180) & landscape (1024x768, 1180x820) optimizations. Dedicated `TabletSidebar` for `md:landscape:flex xl:hidden`, top horizontal Tablet Navigation Strip scoped to `md:flex md:landscape:hidden xl:hidden`, minimum 44x44px touch targets across all interactive controls, balanced 2-column card wrapping, and container-bounded tables with enhanced high-contrast scrollbars. |
+| Phase 6 | `.ai/06_TABLET_FIRST_UI_UX_AND_ACCESSIBILITY.md` | **COMPLETE** | Comprehensive tablet portrait (768x1024, 820x1180) & landscape (1024x768, 1180x820) optimizations. Dedicated `TabletSidebar` for `md:landscape:flex xl:hidden`, top horizontal Tablet Navigation Strip scoped to `md:flex md:landscape:hidden xl:hidden`, minimum 44x44px touch targets across all interactive controls, balanced 2-column card wrapping, container-bounded tables with enhanced high-contrast scrollbars, and clean desktop layout with `md:landscape:flex-row xl:flex-col` + `xl:block` Navbar. |
 | Phase 7 | `.ai/07_SECURITY_PRIVACY_AND_FAILURES.md` | **COMPLETE** | Strict cross-tenant isolation on store and route levels (HTTP 403 on mismatched tenant/partner access), timingSafeEqual constant-time comparisons, idempotency key deduplication. |
 | Phase 8 | `.ai/08_TESTING_AND_ACCEPTANCE.md` | **COMPLETE** | 44 automated unit, security, integration, identity, and localization acceptance tests passing with 0 failures (`npm test`). `tsc --noEmit` passing with 0 type errors. |
 | Phase 9 | `.ai/09_RELEASE_CHECKLIST.md` | **COMPLETE** | Release checklist evaluated honestly. Verdict: **READY FOR STAGING**. |
 | Identity Update | `.ai/IDENTITY_UPDATE_EXECUTE.md` | **COMPLETE** | Fayda e-ID national ID adapter (FAN/FIN masking, simulation badge, production fail-closed), mobile-first E.164 auth, cryptographic 6-digit OTP challenges, password reset/change step-up, user profile photo upload, and `/api/admin/users` governance with suspension audit logs. |
 | Extension & Governance | `.ai/00_MASTER_PLAN.md` | **COMPLETE** | Team directory & cryptographic invitation tokens (`/api/memberships`, `TeamPage.tsx`), Executive Performance & Reconciliation Reports (`/api/reports/analytics`, `ReportsPage.tsx`), User Profile & Credentials manager (`ProfilePage.tsx`), Multi-Tenant Context Switcher. |
-| Localization & i18n | `.ai/00_MASTER_PLAN.md` | **COMPLETE** | Comprehensive end-to-end multi-language translation across all 5 national languages (English, Amharic, Afan Oromo, Tigrinya, Somali). 100% dictionary key parity (~1,100 keys/language, 5,599 lines), zero missing keys, parameter interpolation, `DYNAMIC_SEED_MAP` resolution for all server-seeded business/partner/cargo/map/audit records, charts, tables, partner manifests, and external recipient native language switcher. |
+| Localization & i18n | `.ai/00_MASTER_PLAN.md` | **COMPLETE** | Comprehensive end-to-end multi-language translation across all 5 national languages (English, Amharic, Afan Oromo, Tigrinya, Somali). 100% dictionary key parity (1,280+ keys/language, 6,440 lines), zero missing keys, parameter interpolation, `DYNAMIC_SEED_MAP` resolution for all server-seeded business/partner/cargo/map/audit records, charts, tables, partner manifests, and external recipient native language switcher. |
 
 ---
 
@@ -175,18 +175,28 @@ $ npm test
 
 ## 5. Changes Made in This Session & Acceptance Evidence
 - **Deep End-to-End Localization Audit & Full 5-Language Coverage (`en`, `am`, `om`, `ti`, `so`)**:
-  - Audited every page, table, chart, sparkline, map overlay, modal, status badge, and dynamic server-seeded payload to eliminate remaining untranslated English strings.
-  - Expanded `/src/i18n/translations.ts` to **~1,100 keys per language** (5,599 lines total) with **100% dictionary key parity** verified by automated acceptance tests across English (`en`), Amharic (`am` - አማርኛ), Afan Oromo (`om` - Afaan Oromoo), Tigrinya (`ti` - ትግርኛ), and Somali (`so` - Soomaali).
-  - **Dynamic & Server-Seeded Data Localization (`DYNAMIC_SEED_MAP` in `LanguageContext.tsx` + `seed.*` keys in `translations.ts`)**:
-    - Mapped all 63 server-seeded strings (`seed.biz_*`, `seed.ptn_*`, `seed.loc_*`, `seed.item_*`, `seed.line_note_*`, `seed.disp_note_*`, `seed.disc_note_*`, `seed.signoff_*`, `seed.chk_*`, `seed.wp_*`, `seed.notif_*`, `seed.audit_*`) in `LanguageContext.tsx` so `t(dynamicString)` translates seeded businesses, partners, contact persons, origin terminals, cargo items, line notes, dispatch instructions, discrepancy notes, signoff comments, map checkpoints, waypoints, notifications, and audit log details across all 5 languages while preserving user-created custom entries unchanged.
-    - Wrapped dynamic fields across 19 components (`ProfileSummaryCard.tsx`, `PartnersPage.tsx`, `NotificationDrawer.tsx`, `ExecutiveAnalyticsCharts.tsx`, `ReportsPage.tsx`, `DispatchTrackingMap.tsx`, `BusinessOwnerDashboard.tsx`, `SenderDashboard.tsx`, `ReceiverDashboard.tsx`, `DispatchListPage.tsx`, `LocationsPage.tsx`, `LocationsMapView.tsx`, `AuditPage.tsx`, `SuperAdminDashboard.tsx`, `DispatchDetailPage.tsx`, `PublicPartnerView.tsx`, `ProfileModal.tsx`, `TeamPage.tsx`, `CreateDispatchModal.tsx`, and `Navbar.tsx`).
-    - Removed English `(Export)` suffix from `'action.export'` in Amharic (`'action.export': 'ላክ'`) and added `'audit.entity_reconciliation'` and `'audit.entity_discrepancy'` across all 5 languages.
-    - `SystemStatusPage.tsx`, `RecommendationsView.tsx`, `AuditPage.tsx`, `SuperAdminDashboard.tsx`, `LocationsPage.tsx`, `BulkUploadModal.tsx`, `OutboxManagerModal.tsx`, `DispatchDetailPage.tsx`, `PublicPartnerView.tsx`, `ProfileModal.tsx`, `AuthModal.tsx`: All static and dynamic labels, badges, and descriptions localized across all 5 languages.
-  - **Tablet Portrait & Landscape Navigation & Ergonomics (`Navbar.tsx`, `TabletSidebar.tsx`, `BottomNav.tsx`)**:
-    - Scoped the horizontal Tablet Navigation Strip in `Navbar.tsx` to `hidden md:flex md:landscape:hidden xl:hidden` (Tablet Portrait only) and `TabletSidebar.tsx` to `hidden md:landscape:flex xl:hidden` (Tablet Landscape only) so Tablet Landscape viewports (`1024x768`, `1180x820`) use the dedicated left sidebar without a duplicate top navigation bar.
-    - Localized Role Switcher descriptions (`role.desc_owner`, `role.desc_sender`, `role.desc_receiver`, `role.desc_admin`) in both `Navbar.tsx` and `TabletSidebar.tsx`, and added `truncate max-w-[68px]` to `BottomNav.tsx` mobile items.
-- **Tablet Portrait & Landscape Verification (Playwright Headless Chromium)**:
-  - Verified live rendered UI across Tablet Portrait (`768x1024`, `820x1180`) and Tablet Landscape (`1024x768`, `1180x820`) in Amharic (`am`) and Afan Oromo (`om`), confirming complete native script rendering across dashboards, tables, charts, map checkpoints, and discrepancy manifests with zero horizontal overflow and zero console errors.
+  - Removed duplicate keys that caused TypeScript object literal duplicate property lint errors (`TS1117`).
+  - Added 32 new translation keys across all 5 languages (`en`, `am` [Amharic], `om` [Afan Oromo], `ti` [Tigrinya], `so` [Somali]), expanding `/src/i18n/translations.ts` to 6,440 lines with 1,280+ keys per language and 100% dictionary parity verified by automated acceptance tests (`npm test`).
+  - Localized missing strings and error states across:
+    - `src/pages/team/TeamPage.tsx`: Data loading errors (`team.err_load_failed`), email validation (`team.err_email_required`), and invitation failures (`team.err_invite_failed`).
+    - `src/pages/reports/ReportsPage.tsx`: Localized CSV export table headers (`table.partner_name`, `table.dispatched`, `table.intact`, `table.shortfall`, `table.success_rate`, `table.volume_handled`) and report generation error fallbacks.
+    - `src/pages/auth/AuthModal.tsx`: Localized `auth.country_dial_code`, `auth.skip_verification`, and close button `aria-label`.
+    - `src/pages/profile/ProfilePage.tsx`: Localized `profile.primary_id`.
+    - `src/pages/dashboards/SuperAdminDashboard.tsx`: Localized `admin.filter_by_role` and `admin.filter_by_status`.
+    - `src/components/dashboards/ExecutiveAnalyticsCharts.tsx`: Localized `OVERAGE`, `NOT_RECEIVED`, and `OTHER` root-cause labels.
+    - `src/pages/dispatches/PublicPartnerView.tsx`: Localized `manifest.load_error_msg`, `manifest.submit_success_msg`, and `manifest.submit_error_msg`.
+    - `src/pages/dispatches/CreateDispatchModal.tsx`: Localized partner selection and cargo line item error messages.
+    - `src/components/dispatches/BulkUploadModal.tsx`: Localized CSV format, empty file, and import success messages.
+    - `src/pages/dashboards/BusinessOwnerDashboard.tsx` & `src/pages/dispatches/DispatchListPage.tsx`: Localized error fallback messages.
+- **Tablet Portrait, Tablet Landscape & Desktop Responsive Layout (`App.tsx`, `Navbar.tsx`, `TabletSidebar.tsx`)**:
+  - Updated `App.tsx` layout classes:
+    - Root container: `flex flex-col md:landscape:flex-row xl:flex-col pb-20 md:pb-8 md:landscape:pb-0 xl:pb-8`
+    - Top `Navbar`: `<div className="md:landscape:hidden xl:block">` ensuring Navbar renders properly on desktop (>= 1280px) and tablet portrait, while tablet landscape viewports (1024x768, 1180x820) cleanly render the dedicated `TabletSidebar`.
+    - Main container: max-width containment with zero page-level horizontal overflow (`scrollWidth === innerWidth`).
+- **Build & Test Verification**:
+  - `npm run lint` (`tsc --noEmit`): 0 errors.
+  - `compile_applet`: Build succeeded.
+  - `npm test` (`tsx test/runTests.ts`): **44/44 tests passed with 0 failures** across unit, security, integration, identity, and linguistic integrity suites.
 
 ---
 

@@ -255,7 +255,7 @@ export function ProfilePage() {
                   className="w-full bg-slate-950/50 border border-slate-800/60 rounded-xl px-3 py-2 text-slate-400 cursor-not-allowed opacity-80"
                 />
                 <span className="absolute right-2.5 top-2.5 text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">
-                  Primary ID
+                  {t('profile.primary_id')}
                 </span>
               </div>
             </div>

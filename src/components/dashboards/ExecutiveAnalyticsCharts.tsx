@@ -365,7 +365,13 @@ export const ExecutiveAnalyticsCharts: React.FC<ExecutiveAnalyticsChartsProps> =
                         ? t('discrepancy.count_mismatch')
                         : category === 'LOST'
                         ? t('discrepancy.lost')
-                        : category.replace(/_/g, ' ')}
+                        : category === 'OVERAGE'
+                        ? t('discrepancy.overage')
+                        : category === 'NOT_RECEIVED'
+                        ? t('discrepancy.not_received')
+                        : category === 'OTHER'
+                        ? t('discrepancy.other')
+                        : t('discrepancy.' + category.toLowerCase(), category.replace(/_/g, ' '))}
                     </span>
                     <span className="font-mono text-rose-400 font-bold">{count} {t('unit.units')} ({pct}%)</span>
                   </div>
@@ -382,6 +388,8 @@ export const ExecutiveAnalyticsCharts: React.FC<ExecutiveAnalyticsChartsProps> =
                       ? t('analytics.desc_shortage')
                       : category === 'LOST'
                       ? t('analytics.desc_lost')
+                      : category === 'OVERAGE'
+                      ? t('discrepancy.overage')
                       : t('analytics.desc_mismatch')}
                   </div>
                 </div>

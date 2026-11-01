@@ -63,7 +63,7 @@ export function TeamPage() {
       setMembers(res.members);
       setInvitations(res.invitations);
     } catch (err: any) {
-      setError(err.message || 'Failed to load team data.');
+      setError(err.message || t('team.err_load_failed'));
     } finally {
       setLoading(false);
     }
@@ -79,7 +79,7 @@ export function TeamPage() {
     e.preventDefault();
     setInviteError(null);
     if (!inviteEmail.trim()) {
-      setInviteError('Please enter a valid email address.');
+      setInviteError(t('team.err_email_required'));
       return;
     }
 
@@ -95,7 +95,7 @@ export function TeamPage() {
       setInvitePhone('');
       await loadData();
     } catch (err: any) {
-      setInviteError(err.message || 'Failed to issue invitation.');
+      setInviteError(err.message || t('team.err_invite_failed'));
     } finally {
       setInviteSubmitting(false);
     }

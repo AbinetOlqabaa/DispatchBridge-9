@@ -134,21 +134,26 @@ export const CreateDispatchModal: React.FC<CreateDispatchModalProps> = ({
   const validateInput = (): boolean => {
     setErrorMessage(null);
     if (!selectedPartnerId) {
-      setErrorMessage('Please select a receiving partner.');
+      setErrorMessage(t('dispatch.err_select_partner', 'Please select a receiving partner.'));
       return false;
     }
     if (lines.length === 0) {
-      setErrorMessage('Please add at least one line item to the dispatch.');
+      setErrorMessage(t('dispatch.err_add_line', 'Please add at least one line item to the dispatch.'));
       return false;
     }
     for (let i = 0; i < lines.length; i++) {
       const l = lines[i];
       if (!l.itemName.trim()) {
-        setErrorMessage(`Item line #${i + 1} is missing a description.`);
+        setErrorMessage(t('dispatch.err_missing_desc', 'Item line #{index} is missing a description.', { index: i + 1 }));
         return false;
       }
       if (typeof l.quantitySent !== 'number' || isNaN(l.quantitySent) || l.quantitySent <= 0) {
-        setErrorMessage(`Item line #${i + 1} (${l.itemName}) must have quantity > 0.`);
+        setErrorMessage(
+          t('dispatch.err_quantity_invalid', 'Item line #{index} ({name}) must have quantity > 0.', {
+            index: i + 1,
+            name: l.itemName || `#${i + 1}`,
+          })
+        );
         return false;
       }
     }

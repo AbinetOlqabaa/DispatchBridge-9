@@ -190,7 +190,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     if (!selected) return;
 
     if (!selected.name.endsWith('.csv')) {
-      setUploadError('Please select a valid .csv file format.');
+      setUploadError(t('bulk.err_format', 'Please select a valid .csv file format.'));
       return;
     }
 
@@ -201,7 +201,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
         const text = event.target?.result as string;
         const parsed = parseCsvText(text);
         if (parsed.length === 0) {
-          setUploadError('The selected CSV file contains no valid dispatch data rows.');
+          setUploadError(t('bulk.err_empty', 'The selected CSV file contains no valid dispatch data rows.'));
           setParsedDispatches([]);
         } else {
           setParsedDispatches(parsed);
@@ -232,13 +232,17 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
 
       const response = await api.bulkCreateDispatches(payloads);
 
-      setUploadSuccess(`Successfully imported ${response.createdCount} dispatches into active logistics registry.`);
+      setUploadSuccess(
+        t('bulk.success_imported', 'Successfully imported {count} dispatches into active logistics registry.', {
+          count: response.createdCount,
+        })
+      );
       setTimeout(() => {
         onSuccess(response.createdCount);
         onClose();
       }, 1200);
     } catch (err: any) {
-      setUploadError(err.message || 'Failed to process bulk dispatch creation.');
+      setUploadError(err.message || t('msg.error'));
     } finally {
       setIsProcessing(false);
     }

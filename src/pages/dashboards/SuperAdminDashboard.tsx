@@ -520,7 +520,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onNavi
 
               <div className="flex items-center gap-2">
                 <select
-                  aria-label="Filter users by role"
+                  aria-label={t('admin.filter_by_role', 'Filter users by role')}
                   value={userRoleFilter}
                   onChange={(e) => {
                     setUserRoleFilter(e.target.value as UserRole | '');
@@ -535,7 +535,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({ onNavi
                 </select>
 
                 <select
-                  aria-label="Filter users by account status"
+                  aria-label={t('admin.filter_by_status', 'Filter users by account status')}
                   value={userStatusFilter}
                   onChange={(e) => {
                     setUserStatusFilter(e.target.value as 'ACTIVE' | 'SUSPENDED' | '');

@@ -73,7 +73,7 @@ export const BusinessOwnerDashboard: React.FC<BusinessOwnerDashboardProps> = ({
       setDispatches(dList);
       setPartners(pList);
     } catch (err: any) {
-      setError(err.message || 'Failed to load business overview.');
+      setError(err.message || t('msg.error'));
     } finally {
       setLoading(false);
     }

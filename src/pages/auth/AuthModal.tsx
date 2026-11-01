@@ -358,7 +358,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
-          aria-label="Close dialog"
+          aria-label={t('action.close')}
         >
           <X className="w-5 h-5" />
         </button>
@@ -456,7 +456,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </label>
                 <div className="flex gap-2">
                   <select
-                    aria-label="Country dial code"
+                    aria-label={t('auth.country_dial_code', 'Country dial code')}
                     value={signInCountry.code}
                     onChange={(e) => {
                       const found = SUPPORTED_COUNTRIES.find((c) => c.code === e.target.value);
@@ -629,7 +629,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </label>
                   <div className="flex gap-2">
                     <select
-                      aria-label="Country dial code"
+                      aria-label={t('auth.country_dial_code', 'Country dial code')}
                       value={regCountry.code}
                       onChange={(e) => {
                         const found = SUPPORTED_COUNTRIES.find((c) => c.code === e.target.value);
@@ -857,7 +857,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </label>
                   <div className="flex gap-2">
                     <select
-                      aria-label="Country dial code"
+                      aria-label={t('auth.country_dial_code', 'Country dial code')}
                       value={forgotCountry.code}
                       onChange={(e) => {
                         const found = SUPPORTED_COUNTRIES.find((c) => c.code === e.target.value);
@@ -1046,7 +1046,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               onClick={onClose}
               className="text-xs text-slate-400 hover:text-white underline block text-center mt-2 cursor-pointer"
             >
-              Skip verification for now
+              {t('auth.skip_verification')}
             </button>
           </form>
         )}
