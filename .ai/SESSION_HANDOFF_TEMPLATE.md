@@ -1,0 +1,21 @@
+# Session Handoff — DispatchBridge
+
+- Updated at (ISO timestamp + timezone):
+- Workspace/repository identity and branch/commit if available:
+- Runtime/platform:
+- Stack actually present:
+- Current phase:
+- Phases completed with evidence:
+- Work completed this session:
+- Files changed:
+- Exact commands run and exit status:
+- Tests: passed / failed / skipped (include counts and names):
+- Build/typecheck/lint results:
+- Responsive checks: routes and viewport sizes, orientation, findings:
+- Verified real integrations/persistence:
+- Mock/demo/sandbox-only flows:
+- Known defects and severity:
+- External setup / credentials needed (never include secret values):
+- Assumptions/deviations:
+- Exact next action:
+- Files/context the next session must read:

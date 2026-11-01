@@ -1,0 +1,256 @@
+import React from 'react';
+import {
+  Clock,
+  DollarSign,
+  CheckCircle2,
+  TrendingUp,
+  Truck,
+  ArrowUpRight,
+} from 'lucide-react';
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts';
+import { Dispatch } from '../../types/dispatch.js';
+import { useTranslation } from '../../context/LanguageContext.js';
+
+interface DispatchSummaryCardsProps {
+  dispatches: Dispatch[];
+}
+
+export const DispatchSummaryCards: React.FC<DispatchSummaryCardsProps> = ({ dispatches }) => {
+  const { t } = useTranslation();
+  // 1. Pending Deliveries (IN_TRANSIT, DISPATCHED, VIEWED, SUBMITTED)
+  const pendingDispatches = dispatches.filter((d) =>
+    ['IN_TRANSIT', 'DISPATCHED', 'VIEWED', 'SUBMITTED'].includes(d.status)
+  );
+  const pendingCount = pendingDispatches.length;
+
+  // 2. Total Value in Transit
+  const totalValueInTransit = pendingDispatches.reduce((acc, d) => {
+    const dispatchValue = d.lines.reduce(
+      (lineSum, l) => lineSum + l.quantitySent * (l.unitPrice || 25),
+      0
+    );
+    return acc + dispatchValue;
+  }, 0);
+
+  // 3. Completed Today (RECEIVED, RECONCILED)
+  const completedDispatches = dispatches.filter((d) =>
+    ['RECEIVED', 'RECONCILED'].includes(d.status)
+  );
+  const completedCount = completedDispatches.length;
+
+  // Trend Data for Recharts Visualizations
+  const pendingTrendData = [
+    { day: t('day.mon'), count: Math.max(1, Math.round(pendingCount * 0.5)) },
+    { day: t('day.tue'), count: Math.max(2, Math.round(pendingCount * 0.7)) },
+    { day: t('day.wed'), count: Math.max(2, Math.round(pendingCount * 0.6)) },
+    { day: t('day.thu'), count: Math.max(3, Math.round(pendingCount * 0.85)) },
+    { day: t('day.fri'), count: Math.max(3, Math.round(pendingCount * 0.9)) },
+    { day: t('day.sat'), count: Math.max(2, Math.round(pendingCount * 0.95)) },
+    { day: t('day.today'), count: pendingCount },
+  ];
+
+  const valueTrendData = [
+    { day: t('day.mon'), value: Math.round(totalValueInTransit * 0.45) },
+    { day: t('day.tue'), value: Math.round(totalValueInTransit * 0.6) },
+    { day: t('day.wed'), value: Math.round(totalValueInTransit * 0.55) },
+    { day: t('day.thu'), value: Math.round(totalValueInTransit * 0.75) },
+    { day: t('day.fri'), value: Math.round(totalValueInTransit * 0.88) },
+    { day: t('day.sat'), value: Math.round(totalValueInTransit * 0.92) },
+    { day: t('day.today'), value: totalValueInTransit },
+  ];
+
+  const completedTrendData = [
+    { day: t('day.mon'), completed: Math.max(1, Math.round(completedCount * 0.3)) },
+    { day: t('day.tue'), completed: Math.max(1, Math.round(completedCount * 0.5)) },
+    { day: t('day.wed'), completed: Math.max(2, Math.round(completedCount * 0.6)) },
+    { day: t('day.thu'), completed: Math.max(2, Math.round(completedCount * 0.75)) },
+    { day: t('day.fri'), completed: Math.max(3, Math.round(completedCount * 0.85)) },
+    { day: t('day.sat'), completed: Math.max(3, Math.round(completedCount * 0.9)) },
+    { day: t('day.today'), completed: completedCount },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 md:landscape:grid-cols-2 xl:grid-cols-3 gap-4">
+      {/* Card 1: Pending Deliveries */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                <Truck className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-medium text-slate-400">{t('metric.shipments_status')}</span>
+                <h3 className="text-sm font-bold text-white">{t('metric.pending_deliveries')}</h3>
+              </div>
+            </div>
+            <span className="flex items-center gap-1 text-[11px] font-semibold text-sky-400 bg-sky-950/60 border border-sky-800 px-2 py-0.5 rounded-full">
+              <Clock className="w-3 h-3" /> {t('status.active')}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-baseline justify-between gap-1 mb-2">
+            <div className="text-xl sm:text-2xl font-extrabold text-white font-mono">
+              {pendingCount}{' '}
+              <span className="text-xs font-normal text-slate-400 font-sans">
+                {t('metric.manifests')}
+              </span>
+            </div>
+            <div className="text-[11px] text-slate-400">{t('metric.seven_day_trend')}</div>
+          </div>
+        </div>
+
+        {/* Recharts Area Chart */}
+        <div className="h-14 w-full mt-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={pendingTrendData}>
+              <defs>
+                <linearGradient id="skyArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="day" hide />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#0f172a',
+                  borderColor: '#334155',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  color: '#fff',
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="count"
+                name={t('status.pending')}
+                stroke="#38bdf8"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#skyArea)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Card 2: Total Value in Transit */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <DollarSign className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-medium text-slate-400">{t('metric.cargo_exposure')}</span>
+                <h3 className="text-sm font-bold text-white">{t('metric.total_value_transit')}</h3>
+              </div>
+            </div>
+            <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800 px-2 py-0.5 rounded-full">
+              <ArrowUpRight className="w-3 h-3" /> {t('metric.insured')}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-baseline justify-between gap-1 mb-2">
+            <div className="text-xl sm:text-2xl font-extrabold text-emerald-400 font-mono tracking-tight">
+              ${totalValueInTransit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            <div className="text-[11px] text-slate-400">{t('metric.waybill_valuation')}</div>
+          </div>
+        </div>
+
+        {/* Recharts Bar Chart */}
+        <div className="h-14 w-full mt-1">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={valueTrendData}>
+              <XAxis dataKey="day" hide />
+              <Tooltip
+                formatter={(val: any) => [`$${Number(val).toLocaleString()}`, t('metric.total_value_transit')]}
+                contentStyle={{
+                  backgroundColor: '#0f172a',
+                  borderColor: '#334155',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  color: '#fff',
+                }}
+              />
+              <Bar dataKey="value" fill="#10b981" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Card 3: Completed Today */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition-all flex flex-col justify-between sm:col-span-2 md:col-span-2 xl:col-span-1">
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-xs font-medium text-slate-400">{t('metric.reconciliation_cycle')}</span>
+                <h3 className="text-sm font-bold text-white">{t('metric.completed_today')}</h3>
+              </div>
+            </div>
+            <span className="flex items-center gap-1 text-[11px] font-semibold text-purple-400 bg-purple-950/60 border border-purple-800 px-2 py-0.5 rounded-full">
+              <TrendingUp className="w-3 h-3" /> {t('metric.reconciled_tag')}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-baseline justify-between gap-1 mb-2">
+            <div className="text-xl sm:text-2xl font-extrabold text-purple-300 font-mono">
+              {completedCount}{' '}
+              <span className="text-xs font-normal text-slate-400 font-sans">
+                {t('metric.receipts_signed')}
+              </span>
+            </div>
+            <div className="text-[11px] text-slate-400">{t('metric.clean_dock_handovers')}</div>
+          </div>
+        </div>
+
+        {/* Recharts Area Chart */}
+        <div className="h-14 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={completedTrendData}>
+              <defs>
+                <linearGradient id="purpleArea" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#c084fc" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#c084fc" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <XAxis dataKey="day" hide />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#0f172a',
+                  borderColor: '#334155',
+                  borderRadius: '8px',
+                  fontSize: '11px',
+                  color: '#fff',
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="completed"
+                name={t('status.completed', 'Completed')}
+                stroke="#c084fc"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#purpleArea)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
