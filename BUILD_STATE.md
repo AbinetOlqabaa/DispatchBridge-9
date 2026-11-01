@@ -1,6 +1,6 @@
 # Build State — Business Dispatch & Delivery Reconciliation (DispatchBridge)
 
-- **Last Updated:** 2026-11-01T12:48:00-08:00
+- **Last Updated:** 2026-11-01T13:25:00-08:00
 - **Runtime / Platform:** Node.js v22.14.0 on Linux container with Express 4 backend & Vite 8 React 19 Frontend. Configured as an installable mobile-first Progressive Web App (PWA). *Note: Native Android build tooling (Gradle / Android SDK) is not supported in this runtime environment.*
 - **Stack:**
   - Backend: Node.js, Express 4, TypeScript, HMAC SHA-256 session tokens, timing-safe one-time bootstrap tokens, Fayda e-ID verification adapter, OTP gateway adapter, in-memory domain adapter (`sandboxStore`) with full multi-tenant isolation.
